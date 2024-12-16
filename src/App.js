@@ -123,14 +123,15 @@ const App = () => {
     {!isGameActive && (
       <div className="start-screen">
         <h2>スペースキーでゲーム開始</h2>
+        <p>青色の物体を操作して赤色の物体を捕まえよう</p>
       </div>
     )}
       {collision && (
         <div className="modal">
           <div className="modal-content">
             <h2>残念！</h2>
-            <p>飛んでくる物体に当たりました。</p>
-            <p>生存時間: {elapsedTime} 秒</p>
+            <p>飛んでくる物体をとらえました。</p>
+            <p>時間: {elapsedTime} 秒</p>
             <button onClick={() => window.location.reload()}>スペースキーでスタート</button>
           </div>
         </div>
