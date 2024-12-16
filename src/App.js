@@ -129,7 +129,7 @@ const App = () => {
       {collision && (
         <div className="modal">
           <div className="modal-content">
-            <h2>残念！</h2>
+            <h2>お見事！</h2>
             <p>飛んでくる物体をとらえました。</p>
             <p>時間: {elapsedTime} 秒</p>
             <button onClick={() => window.location.reload()}>スペースキーでスタート</button>
