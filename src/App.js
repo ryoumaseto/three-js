@@ -53,7 +53,7 @@ const generateRandomPosition = () => {
 };
 
 const generateRandomSpeed = () => {
-  const range = 1.5; // 速度範囲
+  const range = 1; // 速度範囲
   return [
     Math.random() * range - range / 2,
     Math.random() * range - range / 2,
