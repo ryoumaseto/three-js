@@ -5,13 +5,35 @@ import * as THREE from 'three';
 import Player from './Player';
 import './modal.css';
 
-// 飛んでくるオブジェクト
-const FlyingObject = React.forwardRef(({ position }, ref) => (
-  <mesh ref={ref} position={position}>
-    <boxGeometry args={[1, 1, 1]} />
-    <meshStandardMaterial color="red" />
-  </mesh>
-));
+// 5角の星オブジェクト
+const FlyingObject = React.forwardRef(({ position }, ref) => {
+  const shape = new THREE.Shape();
+  const outerRadius = 1;
+  const innerRadius = 0.5;
+  const spikes = 5;
+  const step = Math.PI / spikes;
+
+  for (let i = 0; i < 2 * spikes; i++) {
+    const radius = i % 2 === 0 ? outerRadius : innerRadius;
+    const x = Math.cos(i * step) * radius;
+    const y = Math.sin(i * step) * radius;
+    if (i === 0) {
+      shape.moveTo(x, y);
+    } else {
+      shape.lineTo(x, y);
+    }
+  }
+  shape.closePath();
+
+  const geometry = new THREE.ShapeGeometry(shape);
+
+  return (
+    <mesh ref={ref} position={position}>
+      <primitive attach="geometry" object={geometry} />
+      <meshStandardMaterial color="yellow" />
+    </mesh>
+  );
+});
 
 // ランダムに動くオブジェクトラッパー
 const FlyingObjectWrapper = React.forwardRef(({ initialPosition, speedVector, isGameActive }, ref) => {
@@ -123,14 +145,17 @@ const App = () => {
     {!isGameActive && (
       <div className="start-screen">
         <h2>スペースキーでゲーム開始</h2>
-        <p>青色の物体を操作して赤色の物体を捕まえよう</p>
+        <p>星を捕まえよう</p>
+        <p>wで上方向、sで下方向に移動</p>
+        <p>矢印キーで左右、前後に移動</p>
+        <p>マウスで視点変更もできます</p>
       </div>
     )}
       {collision && (
         <div className="modal">
           <div className="modal-content">
             <h2>お見事！</h2>
-            <p>飛んでくる物体をとらえました。</p>
+            <p>星を捕まえました</p>
             <p>時間: {elapsedTime} 秒</p>
             <button onClick={() => window.location.reload()}>スペースキーでスタート</button>
           </div>
@@ -160,8 +185,8 @@ const App = () => {
             handleCollision={handleCollision} 
           />
           {/* プレイヤー */}
-          <Player ref={playerRef} position={[0, 0, 0]} />
-          {!isGameActive && <OrbitControls />}
+          {isGameActive && <Player ref={playerRef} position={[0, 0, 0]} />}
+          {isGameActive && <OrbitControls />}
         </Canvas>
       </div>
     </>
