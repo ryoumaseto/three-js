@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
 const Player = React.forwardRef(({ position }, ref) => {
   const [keysPressed, setKeysPressed] = useState({});
-  const { camera } = useThree();
-  const groupRef = useRef();
+  const { camera } = useThree(); // カメラ情報を取得
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -26,78 +25,51 @@ const Player = React.forwardRef(({ position }, ref) => {
   }, []);
 
   useFrame(() => {
-    if (!groupRef.current) return;
+    if (!ref.current) return;
 
-    const moveSpeed = 0.5;
+    const moveSpeed = 0.3;
 
-    const forward = new THREE.Vector3();
-    const right = new THREE.Vector3();
+    // カメラの方向を基準にした前後左右の移動ベクトルを計算
+    const forward = new THREE.Vector3(); // カメラ前方向
+    const right = new THREE.Vector3(); // カメラ右方向
     camera.getWorldDirection(forward);
-    forward.y = 0;
+    forward.y = 0; // Y軸方向を無視してXZ平面上で動くようにする
     forward.normalize();
-    right.crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize();
+    right.crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize(); // 前方向とY軸で外積を計算
 
+    // キー入力に基づく移動
     if (keysPressed['ArrowUp']) {
-      groupRef.current.position.addScaledVector(forward, moveSpeed);
+      ref.current.position.addScaledVector(forward, moveSpeed);
     }
     if (keysPressed['ArrowDown']) {
-      groupRef.current.position.addScaledVector(forward, -moveSpeed);
+      ref.current.position.addScaledVector(forward, -moveSpeed);
     }
     if (keysPressed['ArrowLeft']) {
-      groupRef.current.position.addScaledVector(right, -moveSpeed);
+      ref.current.position.addScaledVector(right, -moveSpeed);
     }
     if (keysPressed['ArrowRight']) {
-      groupRef.current.position.addScaledVector(right, moveSpeed);
+      ref.current.position.addScaledVector(right, moveSpeed);
     }
-    if (keysPressed['w']) {
-      groupRef.current.position.y += moveSpeed;
-    }　
-    if (keysPressed['s']) {
-      groupRef.current.position.y -= moveSpeed;
+    if(keysPressed['w']){
+      // 上に移動
+      ref.current.position.y += moveSpeed;
+    }
+    if(keysPressed['s']){
+      // 下に移動
+      ref.current.position.y -= moveSpeed;
     }
 
+    // 画面外に出ないように制限
     const limit = 20;
-    groupRef.current.position.x = Math.max(Math.min(groupRef.current.position.x, limit), -limit);
-    groupRef.current.position.y = Math.max(Math.min(groupRef.current.position.y, limit), -limit);
-    groupRef.current.position.z = Math.max(Math.min(groupRef.current.position.z, limit), -limit);
-
-    // Update the ref's position to match the group's position
-    if (ref && ref.current) {
-      ref.current.position.copy(groupRef.current.position);
-    }
+    ref.current.position.x = Math.max(Math.min(ref.current.position.x, limit), -limit);
+    ref.current.position.z = Math.max(Math.min(ref.current.position.z, limit), -limit);
   });
 
   return (
-    <group ref={groupRef} position={position}>
-      {/* Body */}
-      <mesh position={[0, 0, 0]}>
-        <capsuleGeometry args={[0.3, 1, 4, 8]} />
-        <meshStandardMaterial color="white" />
-      </mesh>
-      {/* Head */}
-      <mesh position={[0, 0.8, 0]}>
-        <sphereGeometry args={[0.25, 32, 32]} />
-        <meshStandardMaterial color="white" />
-      </mesh>
-      {/* Arms */}
-      <mesh position={[-0.4, 0.1, 0]}>
-        <capsuleGeometry args={[0.1, 0.6, 4, 8]} rotation={[0, 0, Math.PI / 2]} />
-        <meshStandardMaterial color="white" />
-      </mesh>
-      <mesh position={[0.4, 0.1, 0]}>
-        <capsuleGeometry args={[0.1, 0.6, 4, 8]} rotation={[0, 0, Math.PI / 2]} />
-        <meshStandardMaterial color="white" />
-      </mesh>
-      {/* Legs */}
-      <mesh position={[-0.2, -0.8, 0]}>
-        <capsuleGeometry args={[0.12, 0.6, 4, 8]} />
-        <meshStandardMaterial color="white" />
-      </mesh>
-      <mesh position={[0.2, -0.8, 0]}>
-        <capsuleGeometry args={[0.12, 0.6, 4, 8]} />
-        <meshStandardMaterial color="white" />
-      </mesh>
-    </group>
+    <mesh ref={ref} position={position}>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color='blue' />
+    </mesh>
   );
 });
 
