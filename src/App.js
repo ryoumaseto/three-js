@@ -44,7 +44,7 @@ const FlyingObjectWrapper = React.forwardRef(({ initialPosition, speedVector, is
 
 // ランダム位置・速度生成
 const generateRandomPosition = () => {
-  const range = 50; // スポーン範囲
+  const range = 100; // スポーン範囲
   return [
     Math.random() * range - range / 2,
     Math.random() * range - range / 2,
@@ -53,7 +53,7 @@ const generateRandomPosition = () => {
 };
 
 const generateRandomSpeed = () => {
-  const range = 1; // 速度範囲
+  const range = 0.5; // 速度範囲
   return [
     Math.random() * range - range / 2,
     Math.random() * range - range / 2,

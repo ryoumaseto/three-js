@@ -50,10 +50,17 @@ const Player = React.forwardRef(({ position }, ref) => {
     if (keysPressed['ArrowRight']) {
       ref.current.position.addScaledVector(right, moveSpeed);
     }
+    if (keysPressed['w']) {
+      ref.current.position.y += moveSpeed;
+    }　
+    if (keysPressed['s']) {
+      ref.current.position.y -= moveSpeed;
+    }
 
     // 画面外に出ないように制限
     const limit = 20;
     ref.current.position.x = Math.max(Math.min(ref.current.position.x, limit), -limit);
+    ref.current.position.y = Math.max(Math.min(ref.current.position.y, limit), -limit);
     ref.current.position.z = Math.max(Math.min(ref.current.position.z, limit), -limit);
   });
 
